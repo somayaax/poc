@@ -1,0 +1,89 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: backend
+    networks:
+      - bookstore
+    ports:
+      - '3000:3000'
+    depends_on:
+      - database
+    volumes:
+      - ./src:/app/src
+    env_file:
+      - .env
+
+  database:
+    build:
+      context: .
+      dockerfile: Dockerfile.db
+    container_name: database
+    restart: always
+    hostname: maindb
+    networks:
+      - bookstore
+    expose:
+      - 27017
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb-data:/data/db
+      - mongodb-config:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootUserPW123
+    command: --replSet rs0 --keyFile /etc/mongo-keyfile --bind_ip_all --port 27017
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'maindb:27017'}]}) }" | mongosh --port 27017 -u root -p rootUserPW123 --authenticationDatabase admin
+      interval: 5s
+      timeout: 15s
+      start_period: 15s
+      retries: 10
+
+    
+  minio:
+    container_name: minio
+    image: minio/minio
+    restart: always
+    networks:
+      - bookstore
+    volumes:
+      - minio:/data
+    environment:
+      MINIO_ROOT_USER: avTGE3d9P
+      MINIO_ROOT_PASSWORD: l71t4tFB5
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    expose:
+      - 9000
+      - 9001
+    command: ["server", "--console-address", ":9001", "/data"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+        
+  redis:
+    container_name: redis
+    image: redis
+    expose:
+      - 6379
+    ports:
+      - 6379:6379
+    networks:
+      - bookstore
+    volumes: 
+      - redis-cache:/data
+
+volumes:
+  mongodb-data:
+  mongodb-config:
+  minio:
+  redis-cache:
+
+networks:
+  bookstore:
