@@ -17,10 +17,15 @@ export class User extends Document {
   @Prop({ required: true, maxlength: 30 })
   lastName: string;
 
-  @Prop({ required: true })
+  @Prop({ required: true, type: Date })
   dob: Date;
 
-  @Prop({ required: true, enum: UserStatus, default: UserStatus.ACTIVE })
+  @Prop({
+    required: true,
+    type: String,
+    enum: UserStatus,
+    default: UserStatus.ACTIVE,
+  })
   status: UserStatus;
 
   @Prop({ default: false })

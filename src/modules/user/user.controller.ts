@@ -5,7 +5,7 @@ import { CurrentUser } from '../../common/decorators';
 import { AuthRole, SuccessResponse } from '../../common/types';
 import { User } from './user.schema';
 import { ChangePasswordInput } from './dto/change-password.dto';
-import { Request } from 'express';
+import type { Request } from 'express';
 
 @Controller('api/users')
 @UseGuards(JwtGuard)
