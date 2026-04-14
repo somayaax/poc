@@ -14,10 +14,10 @@ export class Admin extends Document {
   @Prop({ required: true, enum: AdminRole, type: [String] })
   roles: AdminRole[];
 
-  @Prop()
+  @Prop({ type: Date })
   lastLogin?: Date;
 
-  @Prop({ required: true, enum: AdminStatus })
+  @Prop({ required: true, type: String, enum: AdminStatus })
   status: AdminStatus;
 
   @Prop({ default: false })
