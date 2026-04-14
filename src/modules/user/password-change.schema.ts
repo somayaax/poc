@@ -20,4 +20,5 @@ export class PasswordChange {
 }
 
 export type PasswordChangeDocument = HydratedDocument<PasswordChange>;
-export const PasswordChangeSchema = SchemaFactory.createForClass(PasswordChange);
+export const PasswordChangeSchema =
+  SchemaFactory.createForClass(PasswordChange);
